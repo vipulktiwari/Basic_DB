@@ -63,7 +63,29 @@ Cross-cutting: **Catalog** (system tables for schemas), **type system & serializ
 | Execution | Volcano iterators | Composable; add operators one at a time |
 | Buffer policy | Steal / no-force | Fast commits; recovery handled by WAL |
 | Concurrency | Strict 2PL + deadlock detection | Correct & explainable; MVCC is a later upgrade |
-| Language | TBD | Pick before Phase 1 |
+| Language | **C++20** (Apple clang, Make build, zero external deps) | Maximum control over memory layout; the classic DB-systems choice |
+
+### 3.1 Repository Layout (grows by phase)
+
+```
+Basic_DB/
+├── Makefile              # build + test entry points (make / make test)
+├── src/
+│   ├── main.cpp          # temporary shell entry point
+│   ├── common/           # foundational types & constants (page_id_t, lsn_t, …)
+│   ├── storage/          # Phase 1: disk manager, slotted pages, heap file
+│   ├── buffer/           # Phase 2: buffer pool
+│   ├── catalog/          # Phase 3: system tables
+│   ├── index/            # Phase 4: B+ tree
+│   ├── parser/  binder/  planner/  execution/   # Phases 5–6
+│   ├── recovery/         # Phase 7: WAL + recovery
+│   ├── concurrency/      # Phase 8: lock manager
+│   └── server/           # Phase 9: TCP server + wire protocol
+└── tests/
+    ├── test_framework.h  # zero-dependency TEST/ASSERT harness
+    └── test_*.cpp        # one file per component
+```
+
 
 ## 4. Component Breakdown
 
