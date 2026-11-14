@@ -1,0 +1,39 @@
+# CI — build Basic_DB and run the full unit-test suite on every PR and push to HDD.
+# Merge blocking is enforced by the branch protection rule that requires these
+# status checks to pass (see repo Settings → Branches).
+name: CI
+
+on:
+  pull_request:            # every PR, targeting any branch
+  push:
+    branches: [HDD]        # keep the default branch green
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true # a new push cancels stale runs of the same ref
+
+jobs:
+  build-and-test:
+    name: ${{ matrix.os }} · ${{ matrix.cxx }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false     # let all legs finish even if one fails
+      matrix:
+        include:
+          - { os: ubuntu-latest, cxx: clang++ }
+          - { os: ubuntu-latest, cxx: g++ }
+          - { os: macos-latest,  cxx: clang++ }  # matches the dev machine
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Toolchain
+        run: |
+          ${{ matrix.cxx }} --version
+          make --version | head -1
+
+      - name: Build
+        run: make CXX=${{ matrix.cxx }}
+
+      - name: Test
+        run: make CXX=${{ matrix.cxx }} test

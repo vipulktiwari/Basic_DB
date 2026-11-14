@@ -1,5 +1,7 @@
 # Basic_DB
 
+![CI](https://github.com/vipulktiwari/Basic_DB/actions/workflows/ci.yml/badge.svg)
+
 A basic but fully functional relational database built from scratch in C++20.
 See [DESIGN.md](DESIGN.md) for the architecture, component breakdown, and phased roadmap.
 
