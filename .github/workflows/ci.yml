@@ -1,4 +1,4 @@
-# CI — build Basic_DB and run the full unit-test suite on every PR and push to HDD.
+# CI — build Basic_DB and run the full unit-test suite on every PR and push to main.
 # Merge blocking is enforced by the branch protection rule that requires these
 # status checks to pass (see repo Settings → Branches).
 name: CI
@@ -6,7 +6,7 @@ name: CI
 on:
   pull_request:            # every PR, targeting any branch
   push:
-    branches: [HDD]        # keep the default branch green
+    branches: [main]        # keep the default branch green
 
 concurrency:
   group: ci-${{ github.ref }}
